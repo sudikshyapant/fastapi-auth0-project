@@ -26,10 +26,10 @@ posts = [
 users = [] 
 
 app = FastAPI()
-# # get for testing
-# @app.get("/", tags = ["test"])
-# def greet():
-#     return {"Hello, World!"}
+# get for testing
+@app.get("/", tags = ["test"])
+def greet():
+    return {"Hello, Welcome to my simple FastAPI app!"}
 
 #1 get posts endpoint
 @app.get("/posts", tags = ["posts"])
@@ -87,7 +87,7 @@ def check_user(data: UserLoginSchema):
         else:
             return False
     
-#5 user login [a handler for logging in a user]
+#6 user login [a handler for logging in a user]
 @app.post("/user/login", tags = ["user"])
 def user_login(user: UserLoginSchema = Body(default = None)):
     if check_user(user):
