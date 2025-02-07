@@ -29,7 +29,7 @@ app = FastAPI()
 # get for testing
 @app.get("/", tags = ["test"])
 def greet():
-    return {"Hello, Welcome to my simple FastAPI app!"}
+    return {"Hello, Welcome to my FastAPI app!"}
 
 #1 get posts endpoint
 @app.get("/posts", tags = ["posts"])
