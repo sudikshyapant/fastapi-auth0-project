@@ -1,9 +1,9 @@
 import fastapi
-from fastapi import FastAPI, Body, Depends
+from fastapi import FastAPI, Body, Depends, Response, status
 import uvicorn
 from app.schema import  PostSchema, UserSchema, UserLoginSchema
 from app.auth.jwt_handler import signJWT
-from app.auth.jwt_bearer import jwtBearer
+from app.auth.jwt_bearer import jwtBearer, VerifyJWT
 
 posts = [
     {
@@ -48,14 +48,25 @@ def get_a_post(id: int):
             }
     
 #3 post a blog post [a handler for creating a post]
-@app.post("/posts", dependencies = [Depends(jwtBearer())], tags=["posts"])
-def add_post(post: PostSchema):
-    post.id = len(posts) + 1 
-    posts.append(post.dict())
-    return {
-        "info" : "Post added!"
-    }
-    
+@app.post("/posts", tags=["posts"])
+def add_post(post: PostSchema, response: Response, token: str = Depends(jwtBearer())):
+    '''a valid access token is required to access this route'''
+    try:
+        # verify JWT token
+        result = VerifyJWT(token).verify()
+        if result.get("status")=="error":
+            response.status_code = status.HTTP_400_BAD_REQUEST
+            return result
+        
+        #Assign an ID and store the post
+        
+        post.id = len(posts) + 1
+        posts.append(post.dict())
+        return {"message": "Post added successfully!","data": post}
+    except Exception as e:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return {"error": str(e)}
+        
 #4 remove a post using post id
 @app.delete("/posts/{id}", tags=["posts"])
 def delete_post(id: int):
