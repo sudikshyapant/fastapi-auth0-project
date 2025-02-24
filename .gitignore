@@ -1,6 +1,5 @@
 .env
-.config
+/.config/
 Pipfile
 Pipfile.lock
 venv
-asset
